@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import com.oauth.service.UserService;
 
 @RestController
 @RequestMapping("/user")
+//@CrossOrigin
 public class UserController {
 
 	@Autowired
@@ -31,7 +33,8 @@ public class UserController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
+    
+	//@CrossOrigin(origins = "https://0f47-115-98-50-111.ngrok-free.app")
 	@GetMapping("/welcome")
 	public String welcome() {
 		return "Welcome this endpoint is not secure";
@@ -56,10 +59,12 @@ public class UserController {
 
 	@PostMapping("/authenticate")
 	public ResponseEntity authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-
+        System.out.println("user="+authRequest.getUsername());
+        System.out.println("password="+authRequest.getPassword());
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 		if (authentication.isAuthenticated()) {
+			System.out.println("test is success");
 			String accessToken = jwtService.generateToken(authRequest.getUsername());
 			String refreshToken = jwtService.generateRefreshToken(authRequest.getUsername());
 
